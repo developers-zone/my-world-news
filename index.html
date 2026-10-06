@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Winnipeg, Kerala and global market news">
+  <title>My World News & Markets</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<header class="header">
+  <h1>📰 My World News & Markets</h1>
+  <p>Winnipeg Local • Kerala Local • Global Markets</p>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="winnipeg">
+    🇨🇦 Winnipeg Local
+  </button>
+
+  <button class="tab" data-tab="kerala">
+    🇮🇳 Kerala Local
+  </button>
+
+  <button class="tab" data-tab="markets">
+    📈 Markets
+  </button>
+</nav>
+
+<main class="container">
+
+  <section id="winnipeg" class="panel active">
+    <div class="panel-heading">
+      <h2>🇨🇦 Winnipeg Local</h2>
+      <p>Broad Winnipeg and Manitoba coverage</p>
+    </div>
+
+    <div id="winnipeg-news" class="news-list">
+      <div class="loading">Loading Winnipeg news...</div>
+    </div>
+  </section>
+
+
+  <section id="kerala" class="panel">
+    <div class="panel-heading">
+      <h2>🇮🇳 Kerala Local</h2>
+      <p>Malayalam + English Kerala coverage</p>
+    </div>
+
+    <div id="kerala-news" class="news-list">
+      <div class="loading">Loading Kerala news...</div>
+    </div>
+  </section>
+
+
+  <section id="markets" class="panel">
+    <div class="panel-heading">
+      <h2>📈 Markets</h2>
+      <p>India • United States • Reuters</p>
+    </div>
+
+    <div class="market-section">
+      <h3>🇮🇳 Nifty / Sensex / NSE</h3>
+      <div id="india-news" class="news-list"></div>
+    </div>
+
+    <div class="market-section">
+      <h3>🇺🇸 U.S. Markets</h3>
+      <div id="usa-news" class="news-list"></div>
+    </div>
+
+    <div class="market-section">
+      <h3>📰 Reuters Markets</h3>
+      <div id="reuters-news" class="news-list"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <span id="status">Loading...</span>
+</footer>
+
+<script src="/app.js"></script>
+
+</body>
+</html>
