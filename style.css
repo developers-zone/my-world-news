@@ -1,0 +1,193 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #eef2f6;
+  color: #1f2937;
+}
+
+.header {
+  background: linear-gradient(
+    135deg,
+    #102a43,
+    #1d4e89,
+    #2878b5
+  );
+
+  color: white;
+  padding: 28px 20px 24px;
+  text-align: center;
+  box-shadow: 0 3px 14px rgba(0,0,0,.18);
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 29px;
+}
+
+.header p {
+  margin: 7px 0 0;
+  font-size: 14px;
+  opacity: .86;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  background: white;
+  padding: 11px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 2px 9px rgba(0,0,0,.10);
+}
+
+.tab {
+  border: none;
+  background: #edf1f5;
+  color: #334155;
+  padding: 12px 25px;
+  border-radius: 9px;
+  font-size: 15px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.tab:hover {
+  background: #dbe5ee;
+}
+
+.tab.active {
+  background: #1d4e89;
+  color: white;
+}
+
+.container {
+  max-width: 1050px;
+  margin: 22px auto;
+  padding: 0 16px;
+}
+
+.panel {
+  display: none;
+}
+
+.panel.active {
+  display: block;
+}
+
+.panel-heading {
+  background: white;
+  border-radius: 10px;
+  padding: 17px 19px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 5px rgba(0,0,0,.07);
+}
+
+.panel-heading h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.panel-heading p {
+  margin: 5px 0 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.story {
+  background: white;
+  margin-bottom: 10px;
+  padding: 15px 18px;
+  border-radius: 9px;
+  box-shadow: 0 1px 5px rgba(0,0,0,.07);
+  border-left: 4px solid #2878b5;
+}
+
+.story:hover {
+  box-shadow: 0 4px 13px rgba(0,0,0,.12);
+}
+
+.headline {
+  color: #173f5f;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.headline:hover {
+  color: #c2410c;
+  text-decoration: underline;
+}
+
+.meta {
+  display: flex;
+  gap: 13px;
+  margin-top: 8px;
+  color: #7b8794;
+  font-size: 11px;
+}
+
+.source {
+  color: #2878b5;
+  font-weight: 700;
+}
+
+.market-section {
+  margin-bottom: 25px;
+}
+
+.market-section h3 {
+  color: #102a43;
+  font-size: 18px;
+  margin: 0 0 10px;
+  padding: 9px 5px;
+  border-bottom: 2px solid #d4dde6;
+}
+
+.loading,
+.empty,
+.error {
+  background: white;
+  padding: 35px;
+  text-align: center;
+  border-radius: 9px;
+  color: #64748b;
+}
+
+.error {
+  color: #b91c1c;
+}
+
+.footer {
+  text-align: center;
+  color: #8a97a6;
+  font-size: 11px;
+  padding: 12px 20px 25px;
+}
+
+@media (max-width: 700px) {
+
+  .header h1 {
+    font-size: 23px;
+  }
+
+  .tabs {
+    justify-content: flex-start;
+    overflow-x: auto;
+  }
+
+  .tab {
+    white-space: nowrap;
+    padding: 10px 16px;
+  }
+
+  .headline {
+    font-size: 15px;
+  }
+}
