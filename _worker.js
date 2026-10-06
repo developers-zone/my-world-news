@@ -300,66 +300,83 @@ function relevanceScore(story) {
 
 
 async function fetchFeed(feed) {
-
   try {
-
-    const response = await fetch(
-      feed.url,
-      {
-        headers: {
-          "User-Agent":
-            "Mozilla/5.0 MyWorldNews/1.0",
-          "Accept":
-            "application/rss+xml, application/xml, text/xml"
-        }
+    const response = await fetch(feed.url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 MyWorldNews/1.0",
+        "Accept": "application/rss+xml, application/atom+xml, application/xml, text/xml, */*"
       }
-    );
+    });
 
     if (!response.ok) {
-      console.log(
-        `${feed.source}: HTTP ${response.status}`
-      );
-
+      console.log(`${feed.source}: HTTP ${response.status}`);
       return [];
     }
 
     const xml = await response.text();
 
-    const document =
-      new DOMParser().parseFromString(
-        xml,
-        "application/xml"
+    // Support both RSS <item> and Atom <entry>
+    const blocks = [];
+
+    const rssItems = xml.match(/<item\b[\s\S]*?<\/item>/gi) || [];
+    const atomEntries = xml.match(/<entry\b[\s\S]*?<\/entry>/gi) || [];
+
+    blocks.push(...rssItems);
+    blocks.push(...atomEntries);
+
+    function getTag(block, tag) {
+      const regex = new RegExp(
+        `<${tag}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${tag}>`,
+        "i"
       );
 
-    const items =
-      Array.from(
-        document.querySelectorAll("item")
+      const match = block.match(regex);
+
+      return match
+        ? cleanText(
+            match[1]
+              .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/gi, "$1")
+          )
+        : "";
+    }
+
+    function getLink(block) {
+      // RSS link
+      const rssLink = getTag(block, "link");
+
+      if (rssLink) {
+        return rssLink;
+      }
+
+      // Atom link href="..."
+      const atomMatch = block.match(
+        /<link[^>]+href=["']([^"']+)["'][^>]*>/i
       );
 
-    return items
-      .map(item => {
+      return atomMatch
+        ? atomMatch[1]
+        : "";
+    }
+
+    return blocks
+      .map(block => {
 
         const title =
-          cleanText(
-            tagText(item, "title")
-          );
-
-        const link =
-          tagText(item, "link");
+          getTag(block, "title");
 
         const description =
-          cleanText(
-            tagText(
-              item,
-              "description"
-            )
-          );
+          getTag(block, "description") ||
+          getTag(block, "summary") ||
+          getTag(block, "content");
+
+        const link =
+          getLink(block);
 
         const pubDate =
-          tagText(
-            item,
-            "pubDate"
-          );
+          getTag(block, "pubDate") ||
+          getTag(block, "published") ||
+          getTag(block, "updated") ||
+          getTag(block, "dc:date");
 
         let date =
           new Date(pubDate);
@@ -380,10 +397,9 @@ async function fetchFeed(feed) {
         };
 
       })
-      .filter(
-        story =>
-          story.title &&
-          story.link
+      .filter(story =>
+        story.title &&
+        story.link
       );
 
   } catch (error) {
@@ -395,6 +411,7 @@ async function fetchFeed(feed) {
     return [];
   }
 }
+
 
 
 function deduplicate(stories) {
