@@ -1,11 +1,17 @@
 const tabs = document.querySelectorAll(".tab");
 const panels = document.querySelectorAll(".panel");
 
+
+// =========================================================
+// TAB HANDLING
+// =========================================================
+
 tabs.forEach(tab => {
 
   tab.addEventListener("click", () => {
 
-    const target = tab.dataset.tab;
+    const target =
+      tab.dataset.tab;
 
     tabs.forEach(t =>
       t.classList.remove("active")
@@ -17,23 +23,38 @@ tabs.forEach(tab => {
 
     tab.classList.add("active");
 
-    document
-      .getElementById(target)
-      .classList.add("active");
+    const panel =
+      document.getElementById(target);
+
+    if (panel) {
+      panel.classList.add("active");
+    }
+
   });
 
 });
 
 
+// =========================================================
+// HTML ESCAPING
+// =========================================================
+
 function escapeHtml(value) {
 
-  const div = document.createElement("div");
+  const div =
+    document.createElement("div");
 
-  div.textContent = value || "";
+  div.textContent =
+    value || "";
 
   return div.innerHTML;
+
 }
 
+
+// =========================================================
+// DATE FORMAT
+// =========================================================
 
 function formatDate(value) {
 
@@ -41,9 +62,14 @@ function formatDate(value) {
     return "";
   }
 
-  const date = new Date(value);
+  const date =
+    new Date(value);
 
-  if (Number.isNaN(date.getTime())) {
+  if (
+    Number.isNaN(
+      date.getTime()
+    )
+  ) {
     return "";
   }
 
@@ -57,8 +83,13 @@ function formatDate(value) {
       minute: "2-digit"
     }
   );
+
 }
 
+
+// =========================================================
+// RENDER STORIES
+// =========================================================
 
 function renderStories(
   elementId,
@@ -66,71 +97,125 @@ function renderStories(
 ) {
 
   const container =
-    document.getElementById(elementId);
+    document.getElementById(
+      elementId
+    );
 
-  if (!stories || !stories.length) {
+
+  if (!container) {
+    return;
+  }
+
+
+  if (
+    !stories ||
+    !stories.length
+  ) {
 
     container.innerHTML =
       '<div class="empty">No stories available.</div>';
 
     return;
+
   }
 
 
   container.innerHTML =
-    stories.map(story => {
+    stories.map(
+      story => {
 
-      const title =
-        escapeHtml(story.title);
+        const title =
+          escapeHtml(
+            story.title
+          );
 
-      const source =
-        escapeHtml(story.source);
 
-      const link =
-        encodeURI(story.link || "#");
+        const source =
+          escapeHtml(
+            story.source
+          );
 
-      const date =
-        formatDate(story.date);
 
-      return `
-        <article class="story">
+        const link =
+          encodeURI(
+            story.link || "#"
+          );
 
-          <a
-            class="headline"
-            href="${link}"
-            target="_blank"
-            rel="noopener noreferrer">
 
-            ${title}
+        const date =
+          formatDate(
+            story.date
+          );
 
-          </a>
 
-          <div class="meta">
+        const subgroup =
+          story.subgroup
+            ? escapeHtml(
+                story.subgroup
+              )
+            : "";
 
-            <span class="source">
-              ${source}
-            </span>
 
-            <span>
-              ${date}
-            </span>
+        return `
+          <article class="story">
 
-          </div>
+            <a
+              class="headline"
+              href="${link}"
+              target="_blank"
+              rel="noopener noreferrer">
 
-        </article>
-      `;
+              ${title}
 
-    }).join("");
+            </a>
+
+            <div class="meta">
+
+              <span class="source">
+                ${source}
+              </span>
+
+              ${
+                subgroup
+                  ? `<span class="market-tag">
+                       ${subgroup}
+                     </span>`
+                  : ""
+              }
+
+              <span>
+                ${date}
+              </span>
+
+            </div>
+
+          </article>
+        `;
+
+      }
+    ).join("");
+
 }
 
+
+// =========================================================
+// LOAD NEWS
+// =========================================================
 
 async function loadNews() {
 
   const status =
-    document.getElementById("status");
+    document.getElementById(
+      "status"
+    );
 
-  status.textContent =
-    "Updating news...";
+
+  if (status) {
+
+    status.textContent =
+      "Updating news...";
+
+  }
 
 
   try {
@@ -149,6 +234,7 @@ async function loadNews() {
       throw new Error(
         `Server returned ${response.status}`
       );
+
     }
 
 
@@ -156,86 +242,123 @@ async function loadNews() {
       await response.json();
 
 
+    // -------------------------------------------------------
+    // WINNIPEG
+    // -------------------------------------------------------
+
     renderStories(
       "winnipeg-news",
       data.winnipeg
     );
+
+
+    // -------------------------------------------------------
+    // KERALA
+    // -------------------------------------------------------
 
     renderStories(
       "kerala-news",
       data.kerala
     );
 
-    renderStories(
-      "india-news",
-      data.india
-    );
+
+    // -------------------------------------------------------
+    // MARKETS
+    //
+    // IMPORTANT:
+    // The Worker now returns ONE combined
+    // data.markets array.
+    // -------------------------------------------------------
 
     renderStories(
-      "usa-news",
-      data.usa
+      "markets-news",
+      data.markets
     );
 
-    renderStories(
-      "reuters-news",
-      data.reuters
-    );
 
+    // -------------------------------------------------------
+    // LAST UPDATED
+    // -------------------------------------------------------
 
     const updated =
       data.updated
-        ? formatDate(data.updated)
+        ? formatDate(
+            data.updated
+          )
         : "just now";
 
 
-    status.textContent =
-      `Last updated: ${updated}`;
+    if (status) {
+
+      status.textContent =
+        `Last updated: ${updated}`;
+
+    }
 
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      "News loading error:",
+      error
+    );
 
-    const message =
-      `
+
+    const message = `
       <div class="error">
         Unable to load news right now.
         Please try again shortly.
       </div>
-      `;
-
-    document.getElementById(
-      "winnipeg-news"
-    ).innerHTML = message;
-
-    document.getElementById(
-      "kerala-news"
-    ).innerHTML = message;
-
-    document.getElementById(
-      "india-news"
-    ).innerHTML = message;
-
-    document.getElementById(
-      "usa-news"
-    ).innerHTML = message;
-
-    document.getElementById(
-      "reuters-news"
-    ).innerHTML = message;
+    `;
 
 
-    status.textContent =
-      "News update failed.";
+    const sections = [
+      "winnipeg-news",
+      "kerala-news",
+      "markets-news"
+    ];
+
+
+    sections.forEach(
+      id => {
+
+        const element =
+          document.getElementById(
+            id
+          );
+
+        if (element) {
+          element.innerHTML =
+            message;
+        }
+
+      }
+    );
+
+
+    if (status) {
+
+      status.textContent =
+        "News update failed.";
+
+    }
+
   }
+
 }
 
 
-// Initial load
+// =========================================================
+// INITIAL LOAD
+// =========================================================
+
 loadNews();
 
 
-// Refresh every 5 minutes
+// =========================================================
+// AUTO REFRESH — EVERY 5 MINUTES
+// =========================================================
+
 setInterval(
   loadNews,
   5 * 60 * 1000
